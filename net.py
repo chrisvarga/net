@@ -139,6 +139,7 @@ def set_ip(ifname, newip):
     fcntl.ioctl(sockfd, SIOCSIFADDR, ifreq)
 
 
+"""
 def get_netmask(ifname):
     sockfd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ifreq = struct.pack("16sH14s", bytes(ifname, "utf-8"), AF_INET, b"\x00" * 14)
@@ -149,6 +150,17 @@ def get_netmask(ifname):
     netmask = socket.ntohl(struct.unpack("16sH2xI8x", res)[2])
 
     return 32 - int(round(math.log(ctypes.c_uint32(~netmask).value + 1, 2), 1))
+"""
+
+
+def get_netmask(ifname):
+    return socket.inet_ntoa(
+        fcntl.ioctl(
+            socket.socket(socket.AF_INET, socket.SOCK_DGRAM),
+            SIOCGIFNETMASK,
+            struct.pack("256s", bytes(ifname, "utf-8")),
+        )[20:24]
+    )
 
 
 def set_netmask(ifname, netmask):
