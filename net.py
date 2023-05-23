@@ -53,11 +53,6 @@ ADVERTISED_10000baseT_Full = 1 << 12
 # This is probably not cross-platform
 SIZE_OF_IFREQ = 40
 
-# Globals
-sock = None
-sockfd = None
-
-
 def up(ifname):
     """Bring up the bridge interface. Equivalent to ifconfig [iface] up."""
     sockfd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -349,8 +344,6 @@ def iterifs(physical=True):
 
     results = interfaces - virtual if physical else interfaces
     return results
-    # for d in results:
-    #    yield Interface(d)
 
 
 def findif(name, physical=True):
