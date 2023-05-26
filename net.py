@@ -134,6 +134,25 @@ def set_ip(ifname, newip):
     fcntl.ioctl(sockfd, SIOCSIFADDR, ifreq)
 
 
+def is_ipv6(n):
+    try:
+        socket.inet_pton(socket.AF_INET6, n)
+        return True
+    except socket.error:
+        return False
+
+
+def get_ipv6(ifname):
+    with open('/proc/net/if_inet6') as f:
+        for line in f:
+            s, netlink_id, prefix_length, scope, flags, if_name = line.split()
+            if ifname == if_name:
+                if s[:4] != "fe80":
+                    ipv6 = f"{s[0:4]}:{s[4:8]}:{s[8:12]}:{s[12:16]}:{s[16:20]}:{s[20:24]}:{s[24:28]}:{s[28:32]}"
+                    print(socket.inet_ntop(socket.AF_INET6, socket.inet_pton(socket.AF_INET6, ipv6)))
+                    return ipv6
+
+
 """
 def get_netmask(ifname):
     sockfd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
