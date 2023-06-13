@@ -6,6 +6,7 @@ import struct
 import ctypes
 import array
 import math
+import ipaddress
 
 SYSFS_NET_PATH = b"/sys/class/net"
 PROCFS_NET_PATH = b"/proc/net/dev"
@@ -152,6 +153,18 @@ def get_ipv6(ifname):
                     print(socket.inet_ntop(socket.AF_INET6, socket.inet_pton(socket.AF_INET6, ipv6)))
                     return ipv6
 
+"""
+def get_ipv6(ifname):
+    with open("/proc/net/if_inet6") as f:
+        for line in f:
+            ipv6, netlink_id, prefix_length, scope, flags, if_name = line.split()
+            if ifname == if_name:
+                ipv6_addr = ipaddress.ip_address(int(ipv6, 16))
+                if ipv6_addr.is_link_local:
+                    continue
+                return ipv6_addr.exploded + "/" + str(int(prefix_length, 16)))
+    return None
+"""
 
 """
 def get_netmask(ifname):
